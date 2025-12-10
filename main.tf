@@ -28,7 +28,7 @@ resource "aws_security_group" "efs" {      # creates new sg for efs
   )
 }
 
-resource "aws_efs_file_system" "this-efs" {
+resource "aws_efs_file_system" "this" {
   creation_token   = var.name
   performance_mode = var.performance_mode
   throughput_mode  = var.throughput_mode
@@ -48,10 +48,10 @@ resource "aws_efs_file_system" "this-efs" {
 # If you have multiple subnets (one per AZ), Terraform creates a mount target in each.
 # EC2 instances in those subnets can mount EFS without cross-AZ traffic.
 
-resource "aws_efs_mount_target" "this-mount" {
+resource "aws_efs_mount_target" "this" {
   for_each = toset(var.subnet_ids)  # creating one mount target per subnet
 
-  file_system_id  = aws_efs_file_system.this-efs.id
+  file_system_id  = aws_efs_file_system.this.id
   subnet_id       = each.value
   security_groups = [aws_security_group.efs.id]
 }
